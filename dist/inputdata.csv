@@ -1,0 +1,6 @@
+city
+northside,city
+southside,city
+building1,northside,h=675.015,dm=550.8
+building2,southside,s=444.2,em=540.1,da=97.9
+building3,southside,ee=10956

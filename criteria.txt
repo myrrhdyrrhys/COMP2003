@@ -1,0 +1,90 @@
+--------------------------------------
+    Addressing of Marking Criteria
+--------------------------------------
+
+1. Appropriate Use of Containers
+    - I used a wide range of containers in this program's implementation. They were mostly used in the model 
+        classes designed to store the information relating to the nodes of the Electrical Network tree and their
+        relationships.
+            - Each leaf node had to contain the table of power consumption figures, so I made use of a HashMap
+                of key type String and value type Double to efficiently store this information for future lookups
+            - Each parent node (LocNode) had to contain a list of its children, so I made use of a HashSet of
+                Object type "Node"'s
+            - There needed to be a larger model class to contain all of the nodes in the network tree, so the
+                Network class was made with a TreeSet field of Node Objects
+    - I also made use of containers such as Sets and Maps as temporary buffers for information needing to be 
+        temporarily stored in say, a recursive method for each method call. For example, in the Generate classes 
+        "generateChildren()" method, where storing the nodes of each level in the generated tree for the next 
+        level's processing was necessary. I made use of a HashSet of Node Objects here so I could make use of the
+        clear() method to easily empty the "nextLevelNodes" Set of data.
+
+2. Clear and Distinct Package/Class/Interface/Method Responsibility
+    - I of course tried to keep the coupling of the program as low as I could, with the separation of concerns 
+        method of MVC (Model/View/Controller) used in my implementation to keep related classes grouped into 
+        their respective packages as follows:
+
+            model - Package contains any class/method that deals with the containment of data or processing of
+                        that data that doesn't interact with the User Interface (terminal in this case) 
+                        - Node.java: The interface for each type of Node present in the network tree
+                        - LocNode.java: The model class for a parent node in the network tree, inherits from Node
+                        - LeafNode.java: The model class for a leaf node in the network tree, inherits from Node
+                        - Network.java: The model class for a full Electrical network tree, stores a set of Node
+                        - Importer.java: The interface for each method of creating a Network the program offers
+                        - Read.java: The class that allows the program to read in a Network from a file
+                        - Generate.java: The class that allows the program to generate a Network from scratch
+                        - Exporter.java: The interface for each method of exporting a Network the program offers
+                        - Write.java: The class that allows the program to write a Network (structured) to a file
+
+            view - Package contains any class/method that deals with the User Interface (terminal in this case)
+                        - Display.java: The class that allows the program to diplay a Network to the Terminal
+
+            controller - Package contains the program's main method, where the program originates and is run from
+                        - ElectricNetwork.java: contains the program's main, processes command-line parameters
+
+    - The interfaces implemented were purposeful, as explained in Sections 4/5/6.
+    - At the method level, each method  was made with a clear purpose in mind, usually denoted by the method 
+        description provided before some method declarations, if the purpose is not obvious due to the
+        declaration/class/context.
+
+3. Appropriate Error Handling
+    - The only errors explicitly mentioned outside of the marking criteria are to do with the program taking 
+        incorrect command line parameters, and an incorrect filename being given with the -r flag
+    - These user errors are handled in the classes ElectricNetwork and Read, with the appropriate exceptions 
+        for: incorrect arguments (IllegalArgumentException) and incorrect filename (FileNotFoundException) raised
+        in each respectively.
+
+4. Appropriate Use of the Strategy Pattern
+    - The Strategy Pattern was used in my program to group the classes responsible for either the creation of a
+        network (by either reading in for a file with the Read class, or by generating one with the Generate 
+        class), or its exportation (through writing to a file with the Write class or by displaying the network
+        to the user with the Display class). This was done with two interfaces, named Importer and Exporter 
+        respectively.
+    - This allowed for a cleaner approach to the writing of the Controller Class "ElectricNetwork" in its
+        handling of the command line parameters supplied to the program, allowing for a implementation similar 
+        to the work done in OOSE practical 2 with a Map container storing the full list of possible user options.
+
+5. Appropriate Use of the Composite Pattern
+    - The Composite Design Pattern was used in my program to allow the parent nodes of the Network tree 
+        (LocNodes) to have a container that can hold many instances of other nodes, used to keep a container
+        of the parent node's child nodes (of type LeafNode or other LocNodes) (in the "children" field in LocNode
+        class). This relationship was used extensively in my creation of a broader container class "Network" 
+        which held all of the Node objects in the full network tree, as well as in the Importer and Exported 
+        child class implementations.
+    - I was worried about making full use of the Composite pattern and putting almost all of the program's 
+        functionality in the model classes for the two types of Node (LocNode and LeafNode), as this would then 
+        have the effect of reducing the cohesion of the program (i.e. designing the "Display" class to make use 
+        of a recursive function present in the Node interface and implemented differently by each type of Node to
+        give the desired printed output). I decided not to do it in the Write class when I obviously could have 
+        done something similar to what I did in Display and add a shared method called "write()" or something to 
+        the Node interface. I instead chose to make use of a toString() method for the Nodes and "isLeaf()" 
+        method given to the Node interface to keep a take a different approach and keep a decent amount of code 
+        related to writing to a file in the Write class.
+
+6. Clear and Correct UML
+    - The UML I drew up should be located in the current directory, named as "Assessment1_UML.png"
+    - Shows the relationships of the classes mentioned previously in this document, with an example of the 
+        Strategy Pattern (the interfaces Importer & Exporter, with multiple implementations of shared methods 
+        (i.e createNetwork and exportNetwork) used by another class (ElectricNetwork)) 
+        as well as the Composite Pattern (a "composite" class and "leaf" class (LeafNode) inheriting from a 
+        "component" superclass (Node), with the composite class (LocNode) aggregating the component class) 
+        present in the diagram.
